@@ -1,6 +1,6 @@
 package com.example.challenge.presentation.model.connection
 
-import  com.example.challenge.presentation.screen.connection.String
+//import  com.example.challenge.presentation.screen.connection.String
 
 data class Connection(
     val avatar: String,

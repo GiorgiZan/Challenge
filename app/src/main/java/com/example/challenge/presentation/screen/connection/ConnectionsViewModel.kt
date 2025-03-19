@@ -2,13 +2,11 @@ package com.example.challenge.presentation.screen.connection
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.challenge.VSS.presentation.mapper.connection.toPresenter
 import com.example.challenge.data.common.Resource
 import com.example.challenge.domain.usecase.connection.GetConnectionsUseCase
 import com.example.challenge.domain.usecase.datastore.ClearDataStoreUseCase
 import com.example.challenge.presentation.event.conection.ConnectionEvent
-import com.example.challenge.presentation.event.log_in.LogInEvent
-import com.example.challenge.presentation.mapper.connection.toPresenter
-import com.example.challenge.presentation.screen.log_in.LogInViewModel
 import com.example.challenge.presentation.state.connection.ConnectionState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -42,19 +40,19 @@ class ConnectionsViewModel @Inject constructor(
 
     private fun fetchConnections() {
         viewModelScope.launch {
-            getConnectionsUseCase().collect {
-                when (it) {
+            getConnectionsUseCase().collect { resource ->
+                when (resource) {
                     is Resource.Loading -> _connectionState.update { currentState ->
                         currentState.copy(
-                            isLoading = it.loading
+                            isLoading = resource.loading
                         )
                     }
 
                     is Resource.Success -> {
-                        _connectionState.update { currentState -> currentState.copy(connections = it.data.map { it.toPresenter() }) }
+                        _connectionState.update { currentState -> currentState.copy(connections = resource.data.map { it.toPresenter() }) }
                     }
 
-                    is Resource.Error -> updateErrorMessage(message = it.errorMessage)
+                    is Resource.Error -> updateErrorMessage(message = resource.errorMessage)
                 }
             }
         }

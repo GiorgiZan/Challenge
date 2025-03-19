@@ -6,7 +6,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.challenge.databinding.FragmentSplashBinding
-import com.example.challenge.data.mapper.base.BaseFragment
+import com.example.challenge.presentation.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -26,21 +26,29 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>(FragmentSplashBinding
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiEvent.collect {
-                    handleNavigationEvents(event = it)
+                    when (it) {
+                        SplashUiEvent.NavigateToConnections -> findNavController().navigate(
+                            SplashFragmentDirections.actionSplashFragmentToConnectionsFragment()
+                        )
+
+                        SplashUiEvent.NavigateToLogIn -> findNavController().navigate(
+                            SplashFragmentDirections.actionSplashFragmentToLogInFragment()
+                        )
+                    }
                 }
             }
         }
     }
 
-    private fun handleNavigationEvents(event: SplashViewModel.SplashUiEvent) {
-        when (event) {
-            is SplashViewModel.SplashUiEvent.NavigateToConnections -> findNavController().navigate(
-                SplashFragmentDirections.actionSplashFragmentToFriendsFragment()
-            )
-
-            is SplashViewModel.SplashUiEvent.NavigateToLogIn -> findNavController().navigate(
-                SplashFragmentDirections.actionSplashFragmentToLogInFragment()
-            )
-        }
-    }
+//    private fun handleNavigationEvents(event: SplashViewModel.SplashUiEvent) {
+//
+//
+//        when (event) {
+//            is SplashViewModel.SplashUiEvent.NavigateToConnections ->
+//                )
+//
+//            is SplashViewModel.SplashUiEvent.NavigateToLogIn ->
+//                )
+//        }
+//    }
 }
